@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Lock } from "lucide-react";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -52,6 +53,11 @@ const Header = () => {
             <Button variant="default" className="bg-accent hover:bg-accent/90 text-accent-foreground">
               Get in Touch
             </Button>
+            <Link to="/login">
+              <Button variant="ghost" size="icon" title="Admin Login">
+                <Lock className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -80,6 +86,12 @@ const Header = () => {
             <Button variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
               Get in Touch
             </Button>
+            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+              <Button variant="outline" className="w-full">
+                <Lock className="mr-2 h-4 w-4" />
+                Admin Login
+              </Button>
+            </Link>
           </div>
         )}
       </nav>
