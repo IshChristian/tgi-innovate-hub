@@ -1,35 +1,31 @@
-export interface CaseStudy {
+export interface Project {
   id: string;
   title: string;
   description: string;
-  metric: string;
-  category: string;
+  image: string;
   url: string;
 }
 
-export const caseStudies: CaseStudy[] = [
+export const projects: Project[] = [
   {
-    id: "ai-efficiency",
-    title: "Efficiency Boost with AI Automation",
-    description: "Helping a global manufacturing company reduce operational costs by 40% through intelligent process automation.",
-    metric: "40% Cost Reduction",
-    category: "Manufacturing",
-    url: "/case-studies/ai-efficiency",
+    id: "smart-logistics",
+    title: "Smart Logistics Platform",
+    description: "AI-powered optimization system for supply chain networks.",
+    image: "/placeholder.svg",
+    url: "/projects/smart-logistics",
   },
   {
-    id: "iot-retail",
-    title: "IoT Transformation in Retail",
-    description: "Enabling a major retail chain to optimize inventory management and enhance customer experience with IoT sensors.",
-    metric: "60% Inventory Accuracy",
-    category: "Retail",
-    url: "/case-studies/iot-retail",
+    id: "greencity",
+    title: "GreenCity IoT Hub",
+    description: "Smart infrastructure management system for eco-friendly cities.",
+    image: "/placeholder.svg",
+    url: "/projects/greencity",
   },
   {
-    id: "digital-banking",
-    title: "Digital Banking Revolution",
-    description: "Modernizing a traditional bank's infrastructure to provide seamless digital services to 2M+ customers.",
-    metric: "2M+ Users Served",
-    category: "Financial Services",
-    url: "/case-studies/digital-banking",
+    id: "ai-retail-insights",
+    title: "AI Retail Insights",
+    description: "Data-driven retail intelligence dashboard for analytics.",
+    image: "/placeholder.svg",
+    url: "/projects/ai-retail-insights",
   },
 ];
