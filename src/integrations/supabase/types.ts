@@ -155,6 +155,39 @@ export type Database = {
         }
         Relationships: []
       }
+      team_members: {
+        Row: {
+          created_at: string | null
+          id: string
+          image: string
+          name: string
+          published: boolean | null
+          role: string
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image: string
+          name: string
+          published?: boolean | null
+          role: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image?: string
+          name?: string
+          published?: boolean | null
+          role?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       testimonials: {
         Row: {
           company: string

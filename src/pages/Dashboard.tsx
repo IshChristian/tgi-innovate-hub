@@ -9,6 +9,7 @@ import ApplicationsManager from "@/components/cms/ApplicationsManager";
 import ProjectsManager from "@/components/cms/ProjectsManager";
 import InsightsManager from "@/components/cms/InsightsManager";
 import TestimonialsManager from "@/components/cms/TestimonialsManager";
+import TeamManager from "@/components/cms/TeamManager";
 
 const Dashboard = () => {
   const { user, isLoading, isAdmin, signOut } = useAuth();
@@ -84,11 +85,12 @@ const Dashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="applications" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="applications">Applications</TabsTrigger>
             <TabsTrigger value="projects">Projects</TabsTrigger>
             <TabsTrigger value="insights">Insights</TabsTrigger>
             <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+            <TabsTrigger value="team">Team</TabsTrigger>
           </TabsList>
 
           <TabsContent value="applications">
@@ -105,6 +107,10 @@ const Dashboard = () => {
 
           <TabsContent value="testimonials">
             <TestimonialsManager />
+          </TabsContent>
+
+          <TabsContent value="team">
+            <TeamManager />
           </TabsContent>
         </Tabs>
       </main>
