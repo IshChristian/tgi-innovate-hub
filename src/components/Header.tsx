@@ -15,15 +15,6 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Applications", href: "#applications" },
-    { name: "Case Studies", href: "#case-studies" },
-    { name: "Insights", href: "#insights" },
-    { name: "Contact", href: "#contact" },
-  ];
-
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -34,22 +25,26 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#home" className="text-2xl font-bold text-primary hover:text-accent transition-colors">
-              Tian Group
+            <a href="#home" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+              <img
+                src="/6.png"
+                alt="Company Logo"
+                height={90}
+                className="h-10 w-auto md:h-10"
+                onError={(e) => {
+                  // Fallback to text logo if image fails to load
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  const parent = (e.target as HTMLImageElement).parentElement;
+                  if (parent) {
+                    parent.innerHTML = '<span class="text-2xl font-bold text-primary">Logo</span>';
+                  }
+                }}
+              />
             </a>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-sm font-medium text-foreground hover:text-accent transition-colors"
-              >
-                {link.name}
-              </a>
-            ))}
+          {/* Desktop Navigation - Only Get in Touch and Login */}
+          <div className="hidden md:flex items-center space-x-4">
             <Button variant="default" className="bg-accent hover:bg-accent/90 text-accent-foreground">
               Get in Touch
             </Button>
@@ -72,17 +67,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-4 animate-fade-in-up">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="block text-sm font-medium text-foreground hover:text-accent transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {link.name}
-              </a>
-            ))}
+          <div className="md:hidden py-4 space-y-4 animate-fade-in-up border-t border-border">
             <Button variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
               Get in Touch
             </Button>

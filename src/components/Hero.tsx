@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, PlayCircle } from "lucide-react";
+import { ArrowRight, Handshake } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -20,9 +20,14 @@ const Hero = () => {
               Explore Applications
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <Button size="lg" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm">
-              <PlayCircle className="mr-2 h-5 w-5" />
-              Watch Video
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm group"
+              onClick={() => window.location.href = "https://forms.gle/AFTGqeos4s6doUiP7"}
+            >
+              <Handshake className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+              Be Partner With Us
             </Button>
           </div>
         </div>

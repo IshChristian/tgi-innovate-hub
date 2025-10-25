@@ -10,7 +10,7 @@ const About = () => {
           <div className="relative h-[400px] md:h-[500px] rounded-lg overflow-hidden card-shadow">
             <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
               <div className="text-center text-white">
-                <div className="text-6xl font-bold mb-4">10+</div>
+                <div className="text-6xl font-bold mb-4">3+</div>
                 <div className="text-xl">Years of Innovation</div>
               </div>
             </div>
