@@ -7,7 +7,7 @@ const About = () => {
       <div className="section-container">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Image side */}
-          <div className="relative h-[400px] md:h-[500px] rounded-lg overflow-hidden card-shadow">
+          <div className="relative h-[400px] md:h-[500px] rounded-lg overflow-hidden card-shadow animate-slide-in-left">
             <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
               <div className="text-center text-white">
                 <div className="text-6xl font-bold mb-4">3+</div>

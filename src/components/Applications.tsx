@@ -10,11 +10,12 @@ interface Application {
   id: string;
   title: string;
   description: string;
-  icon: string;
-  explore_url: string;
-  published: boolean;
-  sort_order: number;
-  created_at: string;
+  image: string;
+  url: string;
+  published: boolean | null;
+  sort_order: number | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 const Applications = () => {
@@ -35,6 +36,14 @@ const Applications = () => {
   const getIcon = (iconName: string) => {
     const Icon = LucideIcons[iconName as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
     return Icon ? <Icon className="h-12 w-12" /> : null;
+  };
+
+  const getImageOrIcon = (app: Application) => {
+    // If image looks like a URL, show it; otherwise try as Lucide icon name
+    if (app.image.startsWith('http') || app.image.startsWith('/')) {
+      return <img src={app.image} alt={app.title} className="h-12 w-12 object-contain" />;
+    }
+    return getIcon(app.image);
   };
 
   // Loading state
@@ -89,7 +98,7 @@ const Applications = () => {
               >
                 <CardHeader>
                   <div className="mb-4 text-accent group-hover:scale-110 transition-transform duration-300">
-                    {getIcon(app.icon)}
+                    {getImageOrIcon(app)}
                   </div>
                   <CardTitle className="text-2xl text-primary group-hover:text-accent transition-colors">
                     {app.title}
@@ -100,7 +109,7 @@ const Applications = () => {
                   <Button
                     variant="outline"
                     className="w-full group/btn border-accent text-accent hover:bg-accent hover:text-accent-foreground transition-all"
-                    onClick={() => window.location.href = app.explore_url}
+                    onClick={() => window.location.href = app.url}
                   >
                     Explore
                     <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
