@@ -248,6 +248,95 @@ export type Database = {
         }
         Relationships: []
       }
+      jobs: {
+        Row: {
+          created_at: string | null
+          department: string
+          description: string
+          id: string
+          location: string
+          published: boolean | null
+          requirements: string
+          sort_order: number | null
+          title: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department: string
+          description: string
+          id?: string
+          location: string
+          published?: boolean | null
+          requirements: string
+          sort_order?: number | null
+          title: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string
+          description?: string
+          id?: string
+          location?: string
+          published?: boolean | null
+          requirements?: string
+          sort_order?: number | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      job_applications: {
+        Row: {
+          created_at: string | null
+          email: string
+          github_url: string | null
+          id: string
+          job_id: string | null
+          name: string
+          phone: string
+          resume_url: string | null
+          cover_letter: string
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          github_url?: string | null
+          id?: string
+          job_id?: string | null
+          name: string
+          phone: string
+          resume_url?: string | null
+          cover_letter: string
+          status?: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          github_url?: string | null
+          id?: string
+          job_id?: string | null
+          name?: string
+          phone?: string
+          resume_url?: string | null
+          cover_letter?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

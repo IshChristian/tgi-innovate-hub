@@ -1,124 +1,121 @@
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
-import * as LucideIcons from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { ArrowUpRight, GraduationCap, Palette, Lightbulb, Compass, Award, Users } from "lucide-react";
 
-// Define TypeScript interface for applications
-interface Application {
-  id: string;
+interface Program {
   title: string;
   description: string;
-  image: string;
-  url: string;
-  published: boolean | null;
-  sort_order: number | null;
-  created_at: string | null;
-  updated_at: string | null;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
+const programs: Program[] = [
+  {
+    title: "Digital Skills Training",
+    description: "Comprehensive coding bootcamps, web development, mobile apps, and software engineering fundamentals for all skill levels.",
+    icon: GraduationCap,
+  },
+  {
+    title: "Design & Creativity",
+    description: "UI/UX design, graphic design, digital art, and creative problem-solving workshops to bring ideas to life.",
+    icon: Palette,
+  },
+  {
+    title: "Innovation & Research",
+    description: "Collaborative research projects, innovation labs, and community-driven tech solutions addressing real-world challenges.",
+    icon: Lightbulb,
+  },
+  {
+    title: "Mentorship & Coaching",
+    description: "One-on-one guidance from industry experts, peer learning groups, and career development support.",
+    icon: Compass,
+  },
+  {
+    title: "Internships & Career Development",
+    description: "Real-world experience through internships, job placement support, and professional networking opportunities.",
+    icon: Award,
+  },
+  {
+    title: "Community Tech Projects",
+    description: "Build impactful solutions together—from civic tech to social innovation projects that benefit local communities.",
+    icon: Users,
+  },
+];
+
 const Applications = () => {
-  const { data: applications = [], isLoading, error } = useQuery({
-    queryKey: ["applications"],
-    queryFn: async (): Promise<Application[]> => {
-      const { data, error } = await supabase
-        .from("applications")
-        .select("*")
-        .eq("published", true)
-        .order("sort_order", { ascending: true });
-      
-      if (error) throw new Error(error.message);
-      return data || [];
-    },
-  });
-
-  const getIcon = (iconName: string) => {
-    const Icon = LucideIcons[iconName as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
-    return Icon ? <Icon className="h-12 w-12" /> : null;
-  };
-
-  const getImageOrIcon = (app: Application) => {
-    // If image looks like a URL, show it; otherwise try as Lucide icon name
-    if (app.image.startsWith('http') || app.image.startsWith('/')) {
-      return <img src={app.image} alt={app.title} className="h-12 w-12 object-contain" />;
-    }
-    return getIcon(app.image);
-  };
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <section id="applications" className="section-padding bg-background">
-        <div className="section-container">
-          <div className="text-center">
-            <p>Loading applications...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <section id="applications" className="section-padding bg-background">
-        <div className="section-container">
-          <div className="text-center">
-            <p>Error loading applications: {error.message}</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section id="applications" className="section-padding bg-background">
+    <section id="applications" className="section-padding bg-gradient-to-b from-background to-muted/30 relative overflow-hidden">
+      {/* Background blurs */}
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-accent/5 rounded-full filter blur-3xl -z-10"></div>
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full filter blur-3xl -z-10"></div>
+
       <div className="section-container">
-        {/* Section header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4 animate-fade-in-up">
-          <h2 className="text-4xl sm:text-5xl font-bold text-primary">Our Applications</h2>
-          <p className="text-xl text-muted-foreground">
-            Innovative solutions engineered for performance and growth.
+        
+        {/* Section Header */}
+        <div className="text-center max-w-4xl mx-auto mb-16 space-y-6 animate-fade-in-up">
+          <span className="text-accent font-semibold tracking-wider uppercase text-sm block">Join Us Today</span>
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tight leading-tight">
+            Join BrightCoders Community Rwanda
+          </h2>
+          <p className="text-xl text-primary/80 font-medium">
+            Empowering Communities Through Technology & Innovation
+          </p>
+          <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Join a global movement connecting learners, innovators, and changemakers. We empower individuals through digital literacy, mentorship, and collaborative innovation.
           </p>
         </div>
 
-        {/* Applications grid */}
-        {applications.length === 0 ? (
-          <div className="text-center">
-            <p className="text-muted-foreground">No applications found.</p>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {applications.map((app, index) => (
+        {/* Programs Sub-header */}
+        <div className="text-left max-w-2xl mb-8 animate-fade-in-up">
+          <h3 className="text-2xl font-bold text-primary">Programs & Opportunities</h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            Discover diverse pathways to grow your skills, connect with mentors, and create meaningful impact through technology.
+          </p>
+        </div>
+
+        {/* Programs Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {programs.map((prog, index) => {
+            const Icon = prog.icon;
+            return (
               <Card
-                key={app.id}
-                className="group hover:card-shadow-hover transition-all duration-300 hover:-translate-y-2 animate-scale-in border-border"
-                style={{ animationDelay: `${index * 100}ms` }}
+                key={prog.title}
+                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/80 bg-background/60 backdrop-blur-sm transition-all duration-500 hover:border-accent/40 hover:shadow-[0_20px_50px_rgba(175,100,36,0.1)] hover:-translate-y-1.5 animate-scale-in"
+                style={{ animationDelay: `${index * 80}ms` }}
               >
-                <CardHeader>
-                  <div className="mb-4 text-accent group-hover:scale-110 transition-transform duration-300">
-                    {getImageOrIcon(app)}
+                {/* Visual hover border bar */}
+                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-accent to-accent/30 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+
+                <CardHeader className="p-6 pb-2">
+                  <div className="mb-5 flex items-center justify-center w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 group-hover:bg-accent group-hover:scale-110 transition-all duration-500 shadow-sm group-hover:shadow-[0_8px_16px_rgba(175,100,36,0.15)]">
+                    <Icon className="h-5 w-5 text-accent group-hover:text-white transition-colors duration-500" />
                   </div>
-                  <CardTitle className="text-2xl text-primary group-hover:text-accent transition-colors">
-                    {app.title}
+                  <CardTitle className="text-xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
+                    {prog.title}
                   </CardTitle>
-                  <CardDescription className="text-base">{app.description}</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <Button
-                    variant="outline"
-                    className="w-full group/btn border-accent text-accent hover:bg-accent hover:text-accent-foreground transition-all"
-                    onClick={() => window.location.href = app.url}
-                  >
-                    Explore
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
+                
+                <CardContent className="p-6 pt-2">
+                  <CardDescription className="text-muted-foreground text-sm leading-relaxed">
+                    {prog.description}
+                  </CardDescription>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
+
+        {/* Call to Action Button */}
+        <div className="text-center pt-4 animate-fade-in-up">
+          <Button
+            size="lg"
+            className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-xl px-10 py-6 text-base font-bold shadow-lg shadow-accent/20 hover:shadow-accent/35 transition-all duration-300 group"
+            onClick={() => window.open("https://brightcoders.tian.rw", "_blank", "noopener,noreferrer")}
+          >
+            <span>Join BrightCoders</span>
+            <ArrowUpRight className="ml-2 h-5 w-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+          </Button>
+        </div>
+
       </div>
     </section>
   );
