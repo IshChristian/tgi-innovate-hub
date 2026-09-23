@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExternalLink, Layers } from "lucide-react";
+import { Layers } from "lucide-react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 
@@ -15,6 +16,8 @@ interface Project {
   sort_order: number | null;
   created_at: string | null;
   updated_at: string | null;
+  category: string | null;
+  technologies: string | null;
 }
 
 const CaseStudies = () => {
@@ -31,36 +34,6 @@ const CaseStudies = () => {
       return data || [];
     },
   });
-
-  // Helper to extract category and tags based on project title dynamically
-  const getProjectMetadata = (title: string) => {
-    const t = title.toLowerCase();
-    if (t.includes("logistic") || t.includes("supply")) {
-      return {
-        category: "Logistics & Supply Chain",
-        tags: ["AI Route Optimization", "Real-time Tracking", "Data Analytics"],
-      };
-    } else if (t.includes("iot") || t.includes("city") || t.includes("smart")) {
-      return {
-        category: "IoT & Smart Systems",
-        tags: ["IoT Gateway", "Sensor Integration", "Live Monitoring"],
-      };
-    } else if (t.includes("retail") || t.includes("insight") || t.includes("analytics")) {
-      return {
-        category: "Business Intelligence",
-        tags: ["Predictive Analytics", "Dashboard", "Big Data"],
-      };
-    } else if (t.includes("finance") || t.includes("bank") || t.includes("loan")) {
-      return {
-        category: "Fintech solutions",
-        tags: ["Micro-loans", "Compliance", "Secure Transactions"],
-      };
-    }
-    return {
-      category: "Enterprise Solutions",
-      tags: ["Digital Transformation", "Cloud Infrastructure", "Security"],
-    };
-  };
 
   if (isLoading) {
     return (
@@ -112,7 +85,7 @@ const CaseStudies = () => {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project, index) => {
-              const meta = getProjectMetadata(project.title);
+              const tags = project.technologies?.split(",").map(tag => tag.trim()).filter(Boolean) || [];
               return (
                 <Card
                   key={project.id}
@@ -140,7 +113,7 @@ const CaseStudies = () => {
                       
                       {/* Category Badge on top-left of image */}
                       <span className="absolute top-4 left-4 z-10 text-[10px] font-bold uppercase tracking-wider bg-primary text-white border border-white/10 px-3 py-1.5 rounded-md shadow-lg">
-                        {meta.category}
+                        {project.category || "Project"}
                       </span>
                     </div>
 
@@ -157,7 +130,7 @@ const CaseStudies = () => {
                   <CardContent className="p-6 pt-2 space-y-5">
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1.5 pt-2">
-                      {meta.tags.map((tag) => (
+                      {tags.map((tag) => (
                         <Badge key={tag} variant="secondary" className="text-[10px] py-0.5 px-2 bg-secondary/60 text-secondary-foreground font-medium rounded">
                           {tag}
                         </Badge>
@@ -165,14 +138,7 @@ const CaseStudies = () => {
                     </div>
 
                     {/* Action button */}
-                    <Button
-                      variant="default"
-                      className="w-full group/btn bg-primary hover:bg-accent text-white transition-all duration-300 rounded-xl font-medium"
-                      onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
-                    >
-                      <span>Visit the Website</span>
-                      <ExternalLink className="ml-2 h-4 w-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform duration-300" />
-                    </Button>
+                    <Button asChild variant="default" className="w-full bg-primary hover:bg-accent text-white rounded-xl"><Link to={`/projects/${project.id}`}>Explore case study <Layers className="ml-2 h-4 w-4" /></Link></Button>
                   </CardContent>
                 </Card>
               );

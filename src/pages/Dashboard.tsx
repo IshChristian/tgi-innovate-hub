@@ -13,7 +13,9 @@ import {
   MessageSquare, 
   Users, 
   Briefcase, 
-  Inbox, 
+  Inbox,
+  Handshake,
+  Mail,
   Menu, 
   X,
   ExternalLink,
@@ -27,6 +29,8 @@ import TestimonialsManager from "@/components/cms/TestimonialsManager";
 import TeamManager from "@/components/cms/TeamManager";
 import JobsManager from "@/components/cms/JobsManager";
 import ApplicationsInbox from "@/components/cms/ApplicationsInbox";
+import PartnersManager from "@/components/cms/PartnersManager";
+import ContactInbox from "@/components/cms/ContactInbox";
 import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
@@ -59,52 +63,22 @@ const Dashboard = () => {
   }, [user, isAdmin]);
 
   const fetchDashboardStats = async () => {
-    try {
-      const [
-        { count: appsCount },
-        { count: projectsCount },
-        { count: insightsCount },
-        { count: testimonialsCount },
-        { count: teamCount },
-        { count: jobsCount },
-        { count: jobAppsCount }
-      ] = await Promise.all([
-        supabase.from("applications").select("*", { count: "exact", head: true }),
-        supabase.from("projects").select("*", { count: "exact", head: true }),
-        supabase.from("insights").select("*", { count: "exact", head: true }),
-        supabase.from("testimonials").select("*", { count: "exact", head: true }),
-        supabase.from("team_members").select("*", { count: "exact", head: true }),
-        supabase.from("jobs").select("*", { count: "exact", head: true }).eq("published", true).maybeSingle().then(() => ({ count: 4 })), // fallback count estimation if table is not fully set up
-        supabase.from("job_applications").select("*", { count: "exact", head: true }).maybeSingle().then(() => ({ count: 0 }))
-      ]);
-
-      // Parse counts safely, mixing in localStorage if needed
-      const localApps = JSON.parse(localStorage.getItem("tgi_local_applications") || "[]");
-      const localJobs = JSON.parse(localStorage.getItem("tgi_local_jobs") || "[]");
-
-      setStats({
-        applications: appsCount || 3,
-        projects: projectsCount || 3,
-        insights: insightsCount || 3,
-        testimonials: testimonialsCount || 3,
-        team: teamCount || 3,
-        jobs: jobsCount || localJobs.length || 4,
-        jobApplications: jobAppsCount || localApps.length || 0,
-      });
-    } catch (err) {
-      console.warn("Error loading exact DB stats, applying fallback calculations");
-      const localApps = JSON.parse(localStorage.getItem("tgi_local_applications") || "[]");
-      const localJobs = JSON.parse(localStorage.getItem("tgi_local_jobs") || "[]");
-      setStats({
-        applications: 3,
-        projects: 3,
-        insights: 3,
-        testimonials: 3,
-        team: 3,
-        jobs: localJobs.length || 4,
-        jobApplications: localApps.length || 0
-      });
+    const [applications, projects, insights, testimonials, team, jobs, jobApplications] = await Promise.all([
+      supabase.from("applications").select("*", { count: "exact", head: true }),
+      supabase.from("projects").select("*", { count: "exact", head: true }),
+      supabase.from("insights").select("*", { count: "exact", head: true }),
+      supabase.from("testimonials").select("*", { count: "exact", head: true }),
+      supabase.from("team_members").select("*", { count: "exact", head: true }),
+      supabase.from("jobs").select("*", { count: "exact", head: true }).eq("published", true),
+      supabase.from("job_applications").select("*", { count: "exact", head: true }),
+    ]);
+    const results = [applications, projects, insights, testimonials, team, jobs, jobApplications];
+    if (results.some(result => result.error)) {
+      console.error("Could not load dashboard statistics", results.filter(result => result.error).map(result => result.error));
     }
+    setStats({ applications: applications.count ?? 0, projects: projects.count ?? 0,
+      insights: insights.count ?? 0, testimonials: testimonials.count ?? 0, team: team.count ?? 0,
+      jobs: jobs.count ?? 0, jobApplications: jobApplications.count ?? 0 });
   };
 
   const handleSignOut = async () => {
@@ -151,6 +125,8 @@ const Dashboard = () => {
     { id: "overview", name: "Console Overview", icon: LayoutDashboard },
     { id: "applications", name: "Corporate Applications", icon: Smartphone },
     { id: "projects", name: "Showcase Projects", icon: FolderGit2 },
+    { id: "partners", name: "Partners", icon: Handshake },
+    { id: "contact", name: "Contact Messages", icon: Mail },
     { id: "insights", name: "Insights & Articles", icon: Newspaper },
     { id: "testimonials", name: "Client Testimonials", icon: MessageSquare },
     { id: "team", name: "Team Roster", icon: Users },
@@ -166,6 +142,10 @@ const Dashboard = () => {
         return <ApplicationsManager />;
       case "projects":
         return <ProjectsManager />;
+      case "partners":
+        return <PartnersManager />;
+      case "contact":
+        return <ContactInbox />;
       case "insights":
         return <InsightsManager />;
       case "testimonials":
