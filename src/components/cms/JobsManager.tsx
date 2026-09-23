@@ -21,31 +21,6 @@ interface Job {
   published: boolean;
 }
 
-const localMockJobs: Job[] = [
-  {
-    id: "sr-react-engineer",
-    title: "Senior React/TypeScript Engineer",
-    department: "Engineering",
-    location: "Kigali, Rwanda (Hybrid)",
-    type: "Full-time",
-    description: "We are looking for a Senior React Engineer to lead frontend development for our AI-powered platforms. You will design, build, and optimize complex user interfaces using React, TypeScript, TailwindCSS, and state management solutions.",
-    requirements: "5+ years of software engineering experience. Expertise in React and TypeScript. Strong understanding of performance optimization and UX best practices.",
-    sort_order: 1,
-    published: true
-  },
-  {
-    id: "ai-ml-engineer",
-    title: "AI & Machine Learning Engineer",
-    department: "AI Research",
-    location: "Remote",
-    type: "Full-time",
-    description: "Join our core AI team to develop and integrate LLMs, computer vision, and predictive models into enterprise applications. You will work on fine-tuning, training, and building APIs for state-of-the-art AI agents.",
-    requirements: "Solid experience in Python, PyTorch/TensorFlow, and ML workflows. Experience with LLM integrations and LangChain. Master's or equivalent experience in CS/Data Science.",
-    sort_order: 2,
-    published: true
-  }
-];
-
 const JobsManager = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -66,29 +41,9 @@ const JobsManager = () => {
   }, []);
 
   const fetchJobs = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("jobs")
-        .select("*")
-        .order("sort_order", { ascending: true });
-
-      if (error) throw error;
-      setJobs(data || []);
-    } catch (err) {
-      console.warn("Could not fetch jobs from Supabase, loading from localStorage/mock");
-      const localJobs = localStorage.getItem("tgi_local_jobs");
-      if (localJobs) {
-        setJobs(JSON.parse(localJobs));
-      } else {
-        setJobs(localMockJobs);
-        localStorage.setItem("tgi_local_jobs", JSON.stringify(localMockJobs));
-      }
-    }
-  };
-
-  const saveLocalJobs = (updatedJobs: Job[]) => {
-    setJobs(updatedJobs);
-    localStorage.setItem("tgi_local_jobs", JSON.stringify(updatedJobs));
+    const { data, error } = await supabase.from("jobs").select("*").order("sort_order", { ascending: true });
+    if (error) toast({ title: "Could not load jobs", description: error.message, variant: "destructive" });
+    else setJobs(data || []);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -118,24 +73,8 @@ const JobsManager = () => {
         resetForm();
         fetchJobs();
       }
-    } catch (err: any) {
-      console.warn("Saving to local storage due to DB sync error:", err.message);
-      
-      let updatedJobs = [...jobs];
-      if (editingId) {
-        updatedJobs = jobs.map(j => j.id === editingId ? { ...j, ...formData } : j);
-        toast({ title: "Success (Local)", description: "Job updated locally" });
-      } else {
-        const newJob = {
-          id: crypto.randomUUID(),
-          ...formData
-        };
-        updatedJobs.push(newJob);
-        toast({ title: "Success (Local)", description: "Job created locally" });
-      }
-      
-      saveLocalJobs(updatedJobs);
-      resetForm();
+    } catch (err: unknown) {
+      toast({ title: "Job not saved", description: err instanceof Error ? err.message : "Please try again.", variant: "destructive" });
     }
   };
 
@@ -163,9 +102,7 @@ const JobsManager = () => {
       toast({ title: "Success", description: "Job deleted" });
       fetchJobs();
     } catch (err) {
-      const updatedJobs = jobs.filter(j => j.id !== id);
-      saveLocalJobs(updatedJobs);
-      toast({ title: "Success (Local)", description: "Job deleted locally" });
+      toast({ title: "Job not deleted", variant: "destructive" });
     }
   };
 

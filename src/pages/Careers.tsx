@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Briefcase, MapPin, Calendar, Clock, Send, Search, Building2, UploadCloud } from "lucide-react";
+import { MapPin, Clock, Search, Building2, Send } from "lucide-react";
 
 interface Job {
   id: string;
@@ -24,53 +24,6 @@ interface Job {
   sort_order: number | null;
   published: boolean | null;
 }
-
-const mockJobs: Job[] = [
-  {
-    id: "sr-react-engineer",
-    title: "Senior React/TypeScript Engineer",
-    department: "Engineering",
-    location: "Kigali, Rwanda (Hybrid)",
-    type: "Full-time",
-    description: "We are looking for a Senior React Engineer to lead frontend development for our AI-powered platforms. You will design, build, and optimize complex user interfaces using React, TypeScript, TailwindCSS, and state management solutions.",
-    requirements: "5+ years of software engineering experience. Expertise in React and TypeScript. Strong understanding of performance optimization and UX best practices.",
-    sort_order: 1,
-    published: true
-  },
-  {
-    id: "ai-ml-engineer",
-    title: "AI & Machine Learning Engineer",
-    department: "AI Research",
-    location: "Remote",
-    type: "Full-time",
-    description: "Join our core AI team to develop and integrate LLMs, computer vision, and predictive models into enterprise applications. You will work on fine-tuning, training, and building APIs for state-of-the-art AI agents.",
-    requirements: "Solid experience in Python, PyTorch/TensorFlow, and ML workflows. Experience with LLM integrations and LangChain. Master's or equivalent experience in CS/Data Science.",
-    sort_order: 2,
-    published: true
-  },
-  {
-    id: "ui-ux-designer",
-    title: "Product Designer (UI/UX)",
-    department: "Design",
-    location: "Kigali, Rwanda / Hybrid",
-    type: "Full-time",
-    description: "We are seeking a Product Designer to craft intuitive, beautiful, and engaging user experiences for our web and mobile applications. You will conduct user research, create wireframes, and design high-fidelity components.",
-    requirements: "3+ years of UI/UX design experience with a strong portfolio. Proficiency in Figma. Experience designing enterprise SaaS products.",
-    sort_order: 3,
-    published: true
-  },
-  {
-    id: "software-intern",
-    title: "Software Development Intern",
-    department: "Engineering",
-    location: "Kigali, Rwanda (Onsite)",
-    type: "Internship",
-    description: "Kickstart your career with our 6-month software development internship. You will work alongside senior engineers on real-world projects, learning industry-standard technologies and methodologies.",
-    requirements: "Student or recent graduate in Computer Science or related field. Basic coding knowledge in JavaScript/Python. Strong problem-solving skills and eagerness to learn.",
-    sort_order: 4,
-    published: true
-  }
-];
 
 const Careers = () => {
   const { toast } = useToast();
@@ -90,48 +43,14 @@ const Careers = () => {
     cover_letter: "",
   });
 
-  const { data: jobs = mockJobs, isLoading, refetch } = useQuery({
+  const { data: jobs = [], isLoading, error: jobsError } = useQuery({
     queryKey: ["jobs"],
     queryFn: async (): Promise<Job[]> => {
-      let dbJobs: Job[] = [];
-      try {
-        const { data, error } = await supabase
-          .from("jobs")
-          .select("*")
-          .eq("published", true)
-          .order("sort_order", { ascending: true });
-        
-        if (!error && data) {
-          dbJobs = data;
-        }
-      } catch (err) {
-        console.warn("Supabase query failed, falling back to local list.");
-      }
-
-      // Load local storage jobs posted by the admin
-      const localJobsJson = localStorage.getItem("tgi_local_jobs");
-      const localJobs: Job[] = localJobsJson ? JSON.parse(localJobsJson) : [];
-
-      // Combine both lists (avoiding duplicates)
-      const dbIds = new Set(dbJobs.map(j => j.id));
-      const combined = [
-        ...dbJobs,
-        ...localJobs.filter(j => !dbIds.has(j.id) && j.published)
-      ];
-
-      return combined.length > 0 ? combined : mockJobs;
+      const { data, error } = await supabase.from("jobs").select("*").eq("published", true).order("sort_order");
+      if (error) throw error;
+      return data || [];
     },
-    initialData: mockJobs
   });
-
-  // Automatically listen to local storage changes to keep jobs updated
-  useEffect(() => {
-    const handleStorageChange = () => {
-      refetch();
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, [refetch]);
 
   const departments = ["All", ...Array.from(new Set(jobs.map((job) => job.department)))];
 
@@ -147,7 +66,7 @@ const Careers = () => {
     setIsDialogOpen(true);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextareaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -158,52 +77,18 @@ const Careers = () => {
 
     setIsSubmitting(true);
 
-    const applicationData = {
-      job_id: selectedJob.id.includes("-") ? selectedJob.id : null, // only send valid UUIDs
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      resume_url: formData.resume_url || "https://example.com/simulated-resume.pdf",
-      github_url: formData.github_url || "",
-      cover_letter: formData.cover_letter,
-      status: "pending"
-    };
-
     try {
-      // 1. Try to save to Supabase
-      const { error } = await supabase
-        .from("job_applications")
-        .insert([applicationData]);
-
+      const { error } = await supabase.from("job_applications").insert({
+        job_id: selectedJob.id,
+        name: formData.name.trim(), email: formData.email.trim(), phone: formData.phone.trim(),
+        resume_url: formData.resume_url.trim() || null, github_url: formData.github_url.trim() || null,
+        cover_letter: formData.cover_letter.trim(),
+      });
       if (error) throw error;
-
-      toast({
-        title: "Application Submitted!",
-        description: `Thank you, ${formData.name}. Your application for ${selectedJob.title} has been successfully sent.`,
-      });
-
+      toast({ title: "Application submitted", description: "Thank you. Our hiring team has received your application." });
       resetForm();
-    } catch (err: any) {
-      console.warn("Could not save to Supabase, saving to local storage instead.", err.message);
-      
-      // 2. Local Storage Fallback so the admin dashboard can still retrieve it!
-      const fallbackApp = {
-        id: crypto.randomUUID(),
-        job_title: selectedJob.title,
-        created_at: new Date().toISOString(),
-        ...applicationData
-      };
-
-      const existingApps = JSON.parse(localStorage.getItem("tgi_local_applications") || "[]");
-      existingApps.push(fallbackApp);
-      localStorage.setItem("tgi_local_applications", JSON.stringify(existingApps));
-
-      toast({
-        title: "Application Received (Saved)",
-        description: `Application for ${selectedJob.title} has been recorded. Our team will review it.`,
-      });
-
-      resetForm();
+    } catch {
+      toast({ title: "Application not submitted", description: "Please try again later. Your details have not been sent.", variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
@@ -270,7 +155,7 @@ const Careers = () => {
           </div>
 
           {/* Job Postings Grid */}
-          {filteredJobs.length === 0 ? (
+          {jobsError ? <p role="alert" className="text-center text-destructive py-10">Job listings could not load. Please try again later.</p> : filteredJobs.length === 0 ? (
             <div className="text-center py-20 bg-background/40 rounded-2xl border border-dashed border-border p-8">
               <Building2 className="h-12 w-12 text-muted-foreground/60 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-primary">No positions found</h3>
@@ -420,23 +305,17 @@ const Careers = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="resume_url" className="text-sm font-semibold text-primary">Resume Link (PDF/Google Drive)</Label>
+              <Label htmlFor="resume_url" className="text-sm font-semibold text-primary">Resume Link (PDF/Google Drive, optional)</Label>
               <Input
                 id="resume_url"
                 name="resume_url"
                 value={formData.resume_url}
                 onChange={handleInputChange}
-                placeholder="https://drive.google.com/... (or attach PDF below)"
+                placeholder="https://drive.google.com/..."
                 disabled={isSubmitting}
                 className="rounded-xl h-11 border-border"
               />
               
-              {/* Simulated upload element for enhanced UI */}
-              <div className="mt-2 border-2 border-dashed border-border/80 hover:border-accent/40 rounded-xl p-3 text-center transition-colors duration-300 cursor-pointer">
-                <UploadCloud className="h-6 w-6 text-muted-foreground mx-auto mb-1.5" />
-                <span className="text-xs text-muted-foreground block font-medium">Click to upload file (Simulated PDF attachment)</span>
-                <input type="file" accept=".pdf" className="hidden" />
-              </div>
             </div>
 
             <div className="space-y-2">

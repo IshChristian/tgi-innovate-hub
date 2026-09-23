@@ -45,7 +45,7 @@ const ApplicationsInbox = () => {
       if (error) throw error;
 
       // Transform db response to match our interface
-      const formattedDbApps: Application[] = (dbApps || []).map((app: any) => ({
+      const formattedDbApps: Application[] = (dbApps || []).map((app) => ({
         id: app.id,
         job_id: app.job_id,
         job_title: app.jobs?.title || "Unknown Position",
@@ -59,23 +59,9 @@ const ApplicationsInbox = () => {
         created_at: app.created_at
       }));
 
-      // 2. Fetch from Local Storage and combine
-      const localAppsJson = localStorage.getItem("tgi_local_applications");
-      const localApps: Application[] = localAppsJson ? JSON.parse(localAppsJson) : [];
-
-      // Combine both lists, avoiding duplicate IDs if any
-      const dbIds = new Set(formattedDbApps.map(app => app.id));
-      const combined = [
-        ...formattedDbApps,
-        ...localApps.filter(app => !dbIds.has(app.id))
-      ].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
-
-      setApplications(combined);
+      setApplications(formattedDbApps);
     } catch (err) {
-      console.warn("Could not fetch applications from Supabase, loading from localStorage");
-      const localAppsJson = localStorage.getItem("tgi_local_applications");
-      const localApps: Application[] = localAppsJson ? JSON.parse(localAppsJson) : [];
-      setApplications(localApps.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()));
+      toast({ title: "Could not load applications", variant: "destructive" });
     }
   };
 
@@ -90,18 +76,7 @@ const ApplicationsInbox = () => {
       toast({ title: "Status Updated", description: `Application status changed to ${newStatus}` });
       fetchApplications();
     } catch (err) {
-      // Local fallback edit
-      const updatedApps = applications.map(app => 
-        app.id === id ? { ...app, status: newStatus } : app
-      );
-      setApplications(updatedApps);
-      localStorage.setItem("tgi_local_applications", JSON.stringify(updatedApps.filter(app => app.id.includes("-")))); // save local ones back
-      
-      toast({ title: "Status Updated (Local)", description: `Application status changed to ${newStatus}` });
-      
-      if (selectedApp && selectedApp.id === id) {
-        setSelectedApp(prev => prev ? { ...prev, status: newStatus } : null);
-      }
+      toast({ title: "Status not updated", variant: "destructive" });
     }
   };
 
@@ -118,11 +93,7 @@ const ApplicationsInbox = () => {
       toast({ title: "Success", description: "Application deleted" });
       fetchApplications();
     } catch (err) {
-      const updatedApps = applications.filter(app => app.id !== id);
-      setApplications(updatedApps);
-      localStorage.setItem("tgi_local_applications", JSON.stringify(updatedApps));
-      toast({ title: "Success (Local)", description: "Application deleted locally" });
-      setIsDetailOpen(false);
+      toast({ title: "Application not deleted", variant: "destructive" });
     }
   };
 

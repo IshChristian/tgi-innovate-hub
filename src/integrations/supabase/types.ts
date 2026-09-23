@@ -121,6 +121,12 @@ export type Database = {
       }
       projects: {
         Row: {
+          category: string | null
+          challenge: string | null
+          solution: string | null
+          outcomes: string | null
+          technologies: string | null
+          gallery_urls: string[]
           created_at: string | null
           description: string
           id: string
@@ -132,6 +138,12 @@ export type Database = {
           url: string
         }
         Insert: {
+          category?: string | null
+          challenge?: string | null
+          solution?: string | null
+          outcomes?: string | null
+          technologies?: string | null
+          gallery_urls?: string[]
           created_at?: string | null
           description: string
           id?: string
@@ -143,6 +155,12 @@ export type Database = {
           url: string
         }
         Update: {
+          category?: string | null
+          challenge?: string | null
+          solution?: string | null
+          outcomes?: string | null
+          technologies?: string | null
+          gallery_urls?: string[]
           created_at?: string | null
           description?: string
           id?: string
@@ -336,6 +354,18 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
+      }
+      partners: {
+        Row: { id: string; name: string; logo_url: string; website_url: string | null; sort_order: number; published: boolean; created_at: string }
+        Insert: { id?: string; name: string; logo_url: string; website_url?: string | null; sort_order?: number; published?: boolean; created_at?: string }
+        Update: { id?: string; name?: string; logo_url?: string; website_url?: string | null; sort_order?: number; published?: boolean; created_at?: string }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: { id: string; name: string; company: string | null; email: string; message: string; created_at: string }
+        Insert: { id?: string; name: string; company?: string | null; email: string; message: string; created_at?: string }
+        Update: { id?: string; name?: string; company?: string | null; email?: string; message?: string; created_at?: string }
+        Relationships: []
       }
     }
     Views: {
