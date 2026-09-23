@@ -50,6 +50,33 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+        }
+        Relationships: []
+      }
       insights: {
         Row: {
           author: string | null
@@ -92,6 +119,125 @@ export type Database = {
         }
         Relationships: []
       }
+      job_applications: {
+        Row: {
+          cover_letter: string
+          created_at: string | null
+          email: string
+          github_url: string | null
+          id: string
+          job_id: string | null
+          name: string
+          phone: string
+          resume_url: string | null
+          status: string
+        }
+        Insert: {
+          cover_letter: string
+          created_at?: string | null
+          email: string
+          github_url?: string | null
+          id?: string
+          job_id?: string | null
+          name: string
+          phone: string
+          resume_url?: string | null
+          status?: string
+        }
+        Update: {
+          cover_letter?: string
+          created_at?: string | null
+          email?: string
+          github_url?: string | null
+          id?: string
+          job_id?: string | null
+          name?: string
+          phone?: string
+          resume_url?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          created_at: string | null
+          department: string
+          description: string
+          id: string
+          location: string
+          published: boolean | null
+          requirements: string
+          sort_order: number | null
+          title: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department: string
+          description: string
+          id?: string
+          location: string
+          published?: boolean | null
+          requirements: string
+          sort_order?: number | null
+          title: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string
+          description?: string
+          id?: string
+          location?: string
+          published?: boolean | null
+          requirements?: string
+          sort_order?: number | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      partners: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string
+          name: string
+          published: boolean
+          sort_order: number
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url: string
+          name: string
+          published?: boolean
+          sort_order?: number
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string
+          name?: string
+          published?: boolean
+          sort_order?: number
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -121,34 +267,52 @@ export type Database = {
       }
       projects: {
         Row: {
+          category: string | null
+          challenge: string | null
           created_at: string | null
           description: string
+          gallery_urls: string[]
           id: string
           image: string
+          outcomes: string | null
           published: boolean | null
+          solution: string | null
           sort_order: number | null
+          technologies: string | null
           title: string
           updated_at: string | null
           url: string
         }
         Insert: {
+          category?: string | null
+          challenge?: string | null
           created_at?: string | null
           description: string
+          gallery_urls?: string[]
           id?: string
           image: string
+          outcomes?: string | null
           published?: boolean | null
+          solution?: string | null
           sort_order?: number | null
+          technologies?: string | null
           title: string
           updated_at?: string | null
           url: string
         }
         Update: {
+          category?: string | null
+          challenge?: string | null
           created_at?: string | null
           description?: string
+          gallery_urls?: string[]
           id?: string
           image?: string
+          outcomes?: string | null
           published?: boolean | null
+          solution?: string | null
           sort_order?: number | null
+          technologies?: string | null
           title?: string
           updated_at?: string | null
           url?: string
