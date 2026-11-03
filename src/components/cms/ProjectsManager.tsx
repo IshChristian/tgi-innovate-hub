@@ -15,6 +15,12 @@ interface Project {
   description: string;
   image: string;
   url: string;
+  category: string | null;
+  challenge: string | null;
+  solution: string | null;
+  outcomes: string | null;
+  technologies: string | null;
+  gallery_urls: string[];
   sort_order: number;
   published: boolean;
 }
@@ -27,6 +33,7 @@ const ProjectsManager = () => {
     description: "",
     image: "",
     url: "",
+    category: "", challenge: "", solution: "", outcomes: "", technologies: "", gallery_urls: [] as string[],
     sort_order: 0,
     published: true,
   });
@@ -98,6 +105,7 @@ const ProjectsManager = () => {
       description: project.description,
       image: project.image,
       url: project.url,
+      category: project.category || "", challenge: project.challenge || "", solution: project.solution || "", outcomes: project.outcomes || "", technologies: project.technologies || "", gallery_urls: project.gallery_urls || [],
       sort_order: project.sort_order,
       published: project.published,
     });
@@ -126,6 +134,7 @@ const ProjectsManager = () => {
       description: "",
       image: "",
       url: "",
+    category: "", challenge: "", solution: "", outcomes: "", technologies: "", gallery_urls: [] as string[],
       sort_order: 0,
       published: true,
     });
@@ -163,8 +172,7 @@ const ProjectsManager = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, url: e.target.value })
                   }
-                  placeholder="https://example.com"
-                  required
+                  placeholder="https://example.com (optional)"
                 />
               </div>
             </div>
@@ -193,6 +201,13 @@ const ProjectsManager = () => {
                 required
               />
             </div>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div><Label htmlFor="category">Category</Label><Input id="category" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} /></div>
+              <div><Label htmlFor="technologies">Technologies (comma separated)</Label><Input id="technologies" value={formData.technologies} onChange={e => setFormData({ ...formData, technologies: e.target.value })} /></div>
+            </div>
+            {([ ["challenge", "The challenge"], ["solution", "Our solution"], ["outcomes", "Outcomes"] ] as const).map(([key, label]) => <div key={key}><Label htmlFor={key}>{label}</Label><Textarea id={key} rows={4} value={formData[key]} onChange={e => setFormData({ ...formData, [key]: e.target.value })} /></div>)}
+            <div><Label htmlFor="gallery">Gallery image URLs (one per line)</Label><Textarea id="gallery" rows={4} value={formData.gallery_urls.join("\n")} onChange={e => setFormData({ ...formData, gallery_urls: e.target.value.split("\n").map(url => url.trim()).filter(Boolean) })} /></div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">

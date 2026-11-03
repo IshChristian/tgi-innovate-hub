@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import SectionHeader from "@/components/SectionHeader";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,6 +14,8 @@ interface Project {
   sort_order: number | null;
   created_at: string | null;
   updated_at: string | null;
+  category: string | null;
+  technologies: string | null;
 }
 
 const CaseStudies = () => {
@@ -81,7 +84,7 @@ const CaseStudies = () => {
         ) : (
           <div className="grid gap-x-8 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((project) => (
-              <a key={project.id} href={project.url} target="_blank" rel="noopener noreferrer" className="group block">
+              <Link key={project.id} to={`/projects/${project.id}`} className="group block">
                 <div className="aspect-[16/10] overflow-hidden rounded-2xl bg-white ring-1 ring-black/5">
                   <img
                     src={project.image || localScreen(project.title)}
@@ -96,11 +99,11 @@ const CaseStudies = () => {
                     }}
                   />
                 </div>
-                <p className="mt-5 text-sm text-muted-foreground">{categoryFor(project.title)}</p>
+                <p className="mt-5 text-sm text-muted-foreground">{project.category || categoryFor(project.title)}</p>
                 <h3 className="mt-1 text-xl font-semibold text-primary capitalize">{project.title}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground line-clamp-3">{project.description}</p>
-                <span className="text-link mt-4">Visit website <ArrowUpRight className="h-4 w-4" /></span>
-              </a>
+                <span className="text-link mt-4">Read the case study <ArrowRight className="h-4 w-4" /></span>
+              </Link>
             ))}
           </div>
         )}

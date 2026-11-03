@@ -71,3 +71,11 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## Showcase and inquiries
+
+The public site displays published projects and partners from Supabase. Admins can edit project case study fields and partner logos in the dashboard. Project cards link to `/projects/:id`. The Partners section appears once a partner has been published.
+
+Contact inquiries are stored in `contact_messages` and can be reviewed in the dashboard. Careers submissions are stored in `job_applications`; errors leave the form intact and do not claim that an application was received. The dashboard shows database counts without demo estimates. Job listings and applications require a working Supabase connection and the careers migration.
+
+Apply the migrations in `supabase/migrations` to the matching Supabase project before deploying this version, including `20260924010000_showcase_partners_contacts.sql`. The migration adds project details, partners, contact messages, RLS policies, and Data API grants. Confirm that this project exposes the `public` schema through the Data API. Add real project descriptions, image URLs, and partner logos through the dashboard; no partner names or logos are fabricated in code. Protect the public forms with rate limiting or CAPTCHA at the deployment boundary if they receive spam.
