@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { Mail, Phone, MapPin, Send, MessageSquare } from "lucide-react";
+import SectionHeader from "@/components/SectionHeader";
+import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -38,161 +38,67 @@ const Contact = () => {
     }));
   };
 
+  const field = "rounded-xl h-12 border-border bg-[#f8f9fb] focus-visible:ring-accent";
+  const channels = [
+    { icon: Mail, label: "Email", value: "contact@tiangroupinnovation.com", href: "mailto:contact@tiangroupinnovation.com" },
+    { icon: Phone, label: "Phone", value: "+250 788 123 456", href: "tel:+250788123456", note: "Monday to Friday, 9:00–17:00 CAT" },
+    { icon: MapPin, label: "Office", value: "Tech City Hub, Floor 4, Kigali, Rwanda" },
+  ];
+
   return (
-    <section id="contact" className="section-padding bg-muted/40 relative overflow-hidden">
-      {/* Decorative blurs */}
-      <div className="absolute top-1/3 left-0 w-80 h-80 bg-accent/5 rounded-full filter blur-3xl -z-10"></div>
-      
+    <section id="contact" className="section-padding bg-[#f4f6f8]">
       <div className="section-container">
-        {/* Section header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4 animate-fade-in-up">
-          <span className="text-accent font-semibold tracking-wider uppercase text-sm block">Get In Touch</span>
-          <h2 className="text-4xl sm:text-5xl font-extrabold text-primary tracking-tight">Let's Shape the Future Together</h2>
-          <p className="text-xl text-muted-foreground">
-            Ready to scale or automate your business? Get in touch with our engineering team.
-          </p>
-        </div>
+        <SectionHeader
+          title="Let's build something together."
+          intro="Partnerships, product questions or press — tell us what you have in mind and the team will reply."
+        />
 
-        <div className="grid lg:grid-cols-12 gap-10 items-stretch">
-          {/* Contact form (Column span 7) */}
-          <Card className="lg:col-span-7 overflow-hidden rounded-2xl border border-border/80 bg-background/60 backdrop-blur-sm shadow-sm animate-scale-in">
-            <CardContent className="p-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-semibold text-primary">
-                      Your Name
-                    </label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      placeholder="e.g. Jean Doe"
-                      disabled={isSubmitting}
-                      className="rounded-xl h-11 border-border bg-background focus:border-accent/50 focus:ring-accent"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="company" className="text-sm font-semibold text-primary">
-                      Company Name
-                    </label>
-                    <Input
-                      id="company"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleChange}
-                      placeholder="e.g. Enterprise Ltd"
-                      disabled={isSubmitting}
-                      className="rounded-xl h-11 border-border bg-background focus:border-accent/50 focus:ring-accent"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-semibold text-primary">
-                    Email Address
-                  </label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="e.g. contact@company.com"
-                    disabled={isSubmitting}
-                    className="rounded-xl h-11 border-border bg-background focus:border-accent/50 focus:ring-accent"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="message" className="text-sm font-semibold text-primary">
-                    Project Requirements / Message
-                  </label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={5}
-                    placeholder="Outline your project timeline, requirements, or general inquiries..."
-                    disabled={isSubmitting}
-                    className="rounded-xl border-border bg-background focus:border-accent/50 focus:ring-accent resize-none"
-                  />
-                </div>
-
-                <Button 
-                  type="submit" 
-                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold py-3 rounded-xl transition-all duration-300 shadow-md h-11"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      <span className="animate-spin rounded-full h-4.5 w-4.5 border-b-2 border-white"></span>
-                      Sending Message...
-                    </span>
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
+          {/* Contact details */}
+          <ul className="lg:col-span-4 space-y-8">
+            {channels.map(({ icon: Icon, label, value, href, note }) => (
+              <li key={label} className="flex gap-4">
+                <Icon className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+                <div>
+                  <p className="text-sm text-muted-foreground">{label}</p>
+                  {href ? (
+                    <a href={href} className="mt-1 block text-lg font-medium text-primary hover:underline underline-offset-4 break-all">{value}</a>
                   ) : (
-                    <span className="flex items-center gap-2">
-                      <Send className="h-4 w-4" />
-                      Send Inquiries
-                    </span>
+                    <p className="mt-1 text-lg font-medium text-primary">{value}</p>
                   )}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                  {note ? <p className="mt-1 text-sm text-muted-foreground">{note}</p> : null}
+                </div>
+              </li>
+            ))}
+          </ul>
 
-          {/* Contact information (Column span 5) */}
-          <div className="lg:col-span-5 flex flex-col justify-between gap-6 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-            
-            <Card className="border border-border/80 bg-background/60 backdrop-blur-sm shadow-sm hover:border-accent/30 transition-all flex-grow">
-              <CardContent className="p-6 flex items-start gap-4">
-                <div className="p-3 bg-accent/10 border border-accent/25 rounded-xl shrink-0">
-                  <Mail className="h-6 w-6 text-accent" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-primary text-base mb-1">Email Correspondence</h3>
-                  <p className="text-muted-foreground text-sm">Our technical managers monitor inbox channels daily.</p>
-                  <a href="mailto:contact@tiangroupinnovation.com" className="text-accent font-semibold text-sm hover:underline block mt-2">
-                    contact@tiangroupinnovation.com
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-border/80 bg-background/60 backdrop-blur-sm shadow-sm hover:border-accent/30 transition-all flex-grow">
-              <CardContent className="p-6 flex items-start gap-4">
-                <div className="p-3 bg-accent/10 border border-accent/25 rounded-xl shrink-0">
-                  <Phone className="h-6 w-6 text-accent" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-primary text-base mb-1">Direct Call Support</h3>
-                  <p className="text-muted-foreground text-sm">Available Monday to Friday, 9:00 AM - 5:00 PM CAT.</p>
-                  <a href="tel:+250788123456" className="text-accent font-semibold text-sm hover:underline block mt-2">
-                    +250 788 123 456
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-border/80 bg-background/60 backdrop-blur-sm shadow-sm hover:border-accent/30 transition-all flex-grow">
-              <CardContent className="p-6 flex items-start gap-4">
-                <div className="p-3 bg-accent/10 border border-accent/25 rounded-xl shrink-0">
-                  <MapPin className="h-6 w-6 text-accent" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-primary text-base mb-1">Visit Headquarters</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed mt-1">
-                    Tech City Hub, Floor 4<br />
-                    Kigali, Rwanda
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="lg:col-span-8 rounded-3xl bg-white p-6 sm:p-10 space-y-6 ring-1 ring-black/5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-medium text-primary">Your name</label>
+                <Input id="name" name="name" value={formData.name} onChange={handleChange} required placeholder="Jean Mugisha" disabled={isSubmitting} className={field} />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="company" className="text-sm font-medium text-primary">Organisation <span className="text-muted-foreground font-normal">(optional)</span></label>
+                <Input id="company" name="company" value={formData.company} onChange={handleChange} placeholder="Company or institution" disabled={isSubmitting} className={field} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium text-primary">Email</label>
+              <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required placeholder="you@example.com" disabled={isSubmitting} className={field} />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="message" className="text-sm font-medium text-primary">Message</label>
+              <Textarea id="message" name="message" value={formData.message} onChange={handleChange} required rows={6} placeholder="What would you like to talk about?" disabled={isSubmitting} className="rounded-xl border-border bg-[#f8f9fb] focus-visible:ring-accent resize-none" />
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <p className="text-xs text-muted-foreground">We usually reply within two working days.</p>
+              <Button type="submit" className="h-12 rounded-full bg-primary hover:bg-primary/90 text-white px-7 text-[15px] font-semibold" disabled={isSubmitting}>
+                {isSubmitting ? "Sending…" : (<>Send message <Send className="ml-2 h-4 w-4" /></>)}
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </section>

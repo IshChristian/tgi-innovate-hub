@@ -1,115 +1,61 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight, ShieldCheck, Cpu, Globe2, Lightbulb } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+
+const facts = [
+  { value: "2023", label: "Founded in Kigali, Rwanda" },
+  { value: "3", label: "Products live — MOTA, BrightCoders and EJWI" },
+  { value: "Web & Android", label: "Where people use our apps" },
+];
+
+const principles = [
+  { title: "Build for real problems", body: "Every product starts from something people in Rwanda deal with every day — getting around, learning a skill, being heard." },
+  { title: "Own the product", body: "We design, build, launch and run our apps ourselves, and stay accountable for them after launch." },
+  { title: "Secure by default", body: "Verified accounts, protected payments and personal data handled with care, from the first release." },
+  { title: "Open to partners", body: "Organisations can bring us an idea and work with the same team that builds our own products." },
+];
 
 const About = () => {
-  const handleContactClick = () => {
+  const toContact = (e: React.MouseEvent) => {
+    e.preventDefault();
     const target = document.getElementById("contact");
-    if (target) {
-      const headerOffset = 80;
-      const elementPosition = target.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-    }
+    if (target) window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - 72, behavior: "smooth" });
   };
 
   return (
-    <section id="about" className="section-padding bg-gradient-to-b from-muted/40 to-background relative overflow-hidden">
-      {/* Decorative background shapes */}
-      <div className="absolute top-1/4 right-0 w-80 h-80 bg-accent/5 rounded-full filter blur-3xl -z-10"></div>
-      <div className="absolute bottom-0 left-10 w-96 h-96 bg-primary/5 rounded-full filter blur-3xl -z-10"></div>
-
+    <section id="about" className="section-padding bg-background">
       <div className="section-container">
-        <div className="grid lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Column 1: Visual Metric Card */}
-          <div className="lg:col-span-5 relative h-[380px] md:h-[460px] rounded-2xl overflow-hidden shadow-xl border border-border bg-gradient-to-tr from-primary to-primary/80 animate-slide-in-left">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(175,100,36,0.15),transparent_60%)]"></div>
-            
-            <div className="absolute inset-0 flex flex-col justify-between p-8 text-white z-10">
-              <div className="space-y-2">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-accent bg-accent/15 px-2.5 py-1 rounded">Established 2023</span>
-                <h3 className="text-xl font-bold">Tian Group Innovation</h3>
-              </div>
-
-              <div className="text-center py-6">
-                <span className="text-7xl font-extrabold text-accent block">3+</span>
-                <span className="text-lg font-medium text-white/90 uppercase tracking-widest mt-2 block">Years of Excellence</span>
-              </div>
-
-              <p className="text-xs text-white/70 leading-relaxed text-center">
-                Engineering intelligent software products, routing configurations, and robust enterprise platforms.
-              </p>
-            </div>
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <h2 className="section-title lg:col-span-7">
+            A Rwandan startup that builds, launches and runs its own apps.
+          </h2>
+          <div className="lg:col-span-5 lg:pt-3 space-y-5 text-lg leading-relaxed text-muted-foreground">
+            <p>
+              We find everyday problems — getting around the city, earning a fair living, being heard — and turn them into products people use from their phone or browser.
+            </p>
+            <p>
+              MOTA, our ride and driver-earnings app, leads the way. Alongside it we run BrightCoders, a learning community, and EJWI, a student voice platform for the University of Rwanda.
+            </p>
+            <a href="#contact" onClick={toContact} className="text-link !text-lg">
+              Work with us <ArrowRight className="h-4 w-4" />
+            </a>
           </div>
+        </div>
 
-          {/* Column 2: Value Proposition Copy */}
-          <div className="lg:col-span-7 space-y-8 animate-fade-in-up">
-            <div className="space-y-3">
-              <span className="text-accent font-semibold tracking-wider uppercase text-sm block">Company Profile</span>
-              <h2 className="text-4xl sm:text-5xl font-bold text-primary tracking-tight">Who We Are</h2>
+        <dl className="mt-20 lg:mt-28 grid gap-10 sm:grid-cols-3 sm:gap-8">
+          {facts.map((f) => (
+            <div key={f.label} className="border-t border-primary/15 pt-6">
+              <dd className="font-display text-4xl lg:text-5xl font-semibold tracking-tight text-primary">{f.value}</dd>
+              <dt className="mt-3 text-[15px] text-muted-foreground">{f.label}</dt>
             </div>
-            
-            <div className="space-y-4 text-base text-muted-foreground leading-relaxed">
-              <p>
-                Tian Group Innovation is a premier technology and implementation company. We engineer custom enterprise systems, machine learning architectures, and IoT hardware integrations designed to scale and optimize client pipelines.
-              </p>
-              <p>
-                Our core mission is to enable digital change. We deliver high-reliability platforms that empower enterprises to make data-driven decisions and automate repetitive tasks.
-              </p>
+          ))}
+        </dl>
+
+        <div className="mt-20 lg:mt-28 grid gap-x-16 gap-y-12 md:grid-cols-2">
+          {principles.map((p) => (
+            <div key={p.title}>
+              <h3 className="text-2xl font-semibold text-primary">{p.title}</h3>
+              <p className="mt-3 text-base leading-relaxed text-muted-foreground max-w-md">{p.body}</p>
             </div>
-
-            {/* Core Values grid */}
-            <div className="grid sm:grid-cols-2 gap-5 pt-2">
-              <div className="flex gap-3 items-start">
-                <div className="p-2 bg-accent/10 border border-accent/25 rounded-lg shrink-0">
-                  <Cpu className="h-4.5 w-4.5 text-accent" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-primary text-sm">Advanced Automation</h4>
-                  <p className="text-xs text-muted-foreground mt-1">Replacing workflows with high-efficiency scripts and AI services.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 items-start">
-                <div className="p-2 bg-accent/10 border border-accent/25 rounded-lg shrink-0">
-                  <ShieldCheck className="h-4.5 w-4.5 text-accent" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-primary text-sm">Enterprise Security</h4>
-                  <p className="text-xs text-muted-foreground mt-1">Enforcing end-to-end encryption and compliance gates.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 items-start">
-                <div className="p-2 bg-accent/10 border border-accent/25 rounded-lg shrink-0">
-                  <Globe2 className="h-4.5 w-4.5 text-accent" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-primary text-sm">Scalable Architecture</h4>
-                  <p className="text-xs text-muted-foreground mt-1">Cloud deployments built to handle heavy data throughput.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 items-start">
-                <div className="p-2 bg-accent/10 border border-accent/25 rounded-lg shrink-0">
-                  <Lightbulb className="h-4.5 w-4.5 text-accent" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-primary text-sm">Client Centricity</h4>
-                  <p className="text-xs text-muted-foreground mt-1">Building custom tailored components aligned to your team.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Action button */}
-            <div className="pt-2">
-              <Button onClick={handleContactClick} className="bg-primary hover:bg-accent text-white font-medium px-6 py-2.5 rounded-xl transition-all duration-300">
-                <span>Work With Us</span>
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
-            </div>
-
-          </div>
+          ))}
         </div>
       </div>
     </section>

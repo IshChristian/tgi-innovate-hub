@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import SectionHeader from "@/components/SectionHeader";
 
 interface TeamMember {
   id: string;
@@ -57,66 +57,41 @@ const Team = () => {
   });
 
   return (
-    <section id="team" className="section-padding bg-gradient-to-b from-background to-muted/20 relative overflow-hidden">
-      {/* Background shape */}
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-accent/5 rounded-full filter blur-3xl -z-10"></div>
-
+    <section id="team" className="section-padding bg-background">
       <div className="section-container">
-        {/* Section header */}
-        <div className="text-center mb-16 animate-fade-in max-w-2xl mx-auto space-y-4">
-          <span className="text-accent font-semibold tracking-wider uppercase text-sm block">Our Experts</span>
-          <h2 className="text-4xl md:text-5xl font-bold text-primary tracking-tight">
-            Meet Our Team
-          </h2>
-          <p className="text-muted-foreground text-lg">
-            The multi-disciplinary creators, engineers, and visionaries driving our technology products and client growth.
-          </p>
-        </div>
+        <SectionHeader
+          title="The people behind our products."
+          intro="Engineers, designers and builders working from Kigali."
+        />
 
-        {/* Team grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {team.map((member, index) => (
-            <Card 
-              key={member.id} 
-              className="group overflow-hidden rounded-2xl border border-border/80 bg-background transition-all duration-500 hover:border-accent/40 hover:shadow-[0_20px_50px_rgba(20,38,62,0.12)] hover:-translate-y-2 animate-scale-in"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <CardContent className="p-0 text-center">
-                {/* Image container with hover overlays */}
-                <div className="relative overflow-hidden aspect-[4/5] bg-muted">
-                  <img
-                    src={member.image || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=600"}
-                    alt={member.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  {/* Subtle vignette gradient on image */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent"></div>
-                </div>
-                
-                {/* Text Details */}
-                <div className="p-6 bg-background relative z-10 border-t border-border/40">
-                  <h3 className="text-xl font-bold text-primary mb-1 group-hover:text-accent transition-colors duration-300">
-                    {member.name}
-                  </h3>
-                  <p className="text-muted-foreground text-sm font-medium mb-3">
-                    {member.role}
-                  </p>
-                  
-                  {/* Dynamic Department badge based on Role */}
-                  <Badge variant="secondary" className="bg-muted text-muted-foreground text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5">
-                    {member.role.toLowerCase().includes("ceo") || member.role.toLowerCase().includes("founder") 
-                      ? "Executive" 
-                      : member.role.toLowerCase().includes("cto") || member.role.toLowerCase().includes("engineer") || member.role.toLowerCase().includes("technology")
-                      ? "Engineering" 
-                      : "Product & Strategy"}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+          {team.map((member) => (
+            <figure key={member.id}>
+              <TeamPhoto member={member} />
+              <figcaption className="mt-4">
+                <span className="block text-xl font-semibold text-primary capitalize">{member.name}</span>
+                <span className="block text-[15px] text-muted-foreground">{member.role}</span>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>
     </section>
+  );
+};
+
+/** The member's photo, or their initials on navy when there is no photo or it fails to load. */
+const TeamPhoto = ({ member }: { member: TeamMember }) => {
+  const [failed, setFailed] = useState(!member.image);
+  const initials = member.name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]?.toUpperCase()).join("");
+  return (
+    <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-primary">
+      {failed ? (
+        <div className="flex h-full w-full items-center justify-center font-display text-5xl font-semibold text-white/80">{initials}</div>
+      ) : (
+        <img src={member.image} alt={member.name} loading="lazy" className="h-full w-full object-cover" onError={() => setFailed(true)} />
+      )}
+    </div>
   );
 };
 

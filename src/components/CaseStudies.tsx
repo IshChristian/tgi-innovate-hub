@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExternalLink, Layers } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import SectionHeader from "@/components/SectionHeader";
 import { supabase } from "@/integrations/supabase/client";
-import { Badge } from "@/components/ui/badge";
 
 interface Project {
   id: string;
@@ -32,151 +30,78 @@ const CaseStudies = () => {
     },
   });
 
-  // Helper to extract category and tags based on project title dynamically
-  const getProjectMetadata = (title: string) => {
+  // Our own screenshot of a product, used when the CMS image is missing or broken.
+  const localScreen = (title: string) => {
     const t = title.toLowerCase();
-    if (t.includes("logistic") || t.includes("supply")) {
-      return {
-        category: "Logistics & Supply Chain",
-        tags: ["AI Route Optimization", "Real-time Tracking", "Data Analytics"],
-      };
-    } else if (t.includes("iot") || t.includes("city") || t.includes("smart")) {
-      return {
-        category: "IoT & Smart Systems",
-        tags: ["IoT Gateway", "Sensor Integration", "Live Monitoring"],
-      };
-    } else if (t.includes("retail") || t.includes("insight") || t.includes("analytics")) {
-      return {
-        category: "Business Intelligence",
-        tags: ["Predictive Analytics", "Dashboard", "Big Data"],
-      };
-    } else if (t.includes("finance") || t.includes("bank") || t.includes("loan")) {
-      return {
-        category: "Fintech solutions",
-        tags: ["Micro-loans", "Compliance", "Secure Transactions"],
-      };
-    }
-    return {
-      category: "Enterprise Solutions",
-      tags: ["Digital Transformation", "Cloud Infrastructure", "Security"],
-    };
+    if (/coder/.test(t)) return "/products/brightcoders.webp";
+    if (/ijwi|ejwi/.test(t)) return "/products/ejwi.webp";
+    if (/mota/.test(t)) return "/products/mota-desktop.webp";
+    return "/placeholder.svg";
   };
 
-  if (isLoading) {
-    return (
-      <section id="projects" className="section-padding bg-muted/60">
-        <div className="section-container">
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
-            <p className="mt-4 text-muted-foreground font-medium">Loading case studies...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // A short category from the project title (the CMS has no category field).
+  const categoryFor = (title: string) => {
+    const t = title.toLowerCase();
+    if (/mota|ride|moto|mobility/.test(t)) return "Mobility";
+    if (/coder|community|learn|academy/.test(t)) return "Learning community";
+    if (/ijwi|ejwi|citizen|civic|complaint/.test(t)) return "Student voice";
+    if (/logistic|supply/.test(t)) return "Logistics";
+    if (/finance|bank|loan|pay/.test(t)) return "Financial services";
+    if (/retail|insight|analytics/.test(t)) return "Data & analytics";
+    return "Digital platform";
+  };
 
-  if (error) {
+  const header = (
+    <SectionHeader
+      title="Everything we have shipped."
+      intro="Products and platforms built by our team, live and in use today."
+    />
+  );
+
+  if (isLoading || error) {
     return (
-      <section id="projects" className="section-padding bg-muted/60">
+      <section id="projects" className="section-padding bg-[#f4f6f8]">
         <div className="section-container">
-          <div className="text-center py-12 text-destructive">
-            <p className="font-semibold">Error loading case studies</p>
-            <p className="text-sm opacity-80">{error.message}</p>
-          </div>
+          {header}
+          <p className={`text-sm ${error ? "text-destructive" : "text-muted-foreground"}`}>
+            {error ? `The portfolio could not be loaded. ${error.message}` : "Loading the portfolio…"}
+          </p>
         </div>
       </section>
     );
   }
 
   return (
-    <section id="projects" className="section-padding bg-muted/50 relative overflow-hidden">
-      {/* Background design glow */}
-      <div className="absolute top-1/4 left-0 w-80 h-80 bg-accent/5 rounded-full filter blur-3xl -z-10"></div>
-      <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-primary/5 rounded-full filter blur-3xl -z-10"></div>
-
+    <section id="projects" className="section-padding bg-[#f4f6f8]">
       <div className="section-container">
-        {/* Section header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4 animate-fade-in-up">
-          <span className="text-accent font-semibold tracking-wider uppercase text-sm block">Case Studies</span>
-          <h2 className="text-4xl sm:text-5xl font-bold text-primary tracking-tight">Proven Impact</h2>
-          <p className="text-xl text-muted-foreground">
-            Explore our portfolio of successfully deployed products and digital platforms across multiple industries.
-          </p>
-        </div>
+        {header}
 
-        {/* Projects grid */}
         {projects.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No case studies found.</p>
-          </div>
+          <p className="text-sm text-muted-foreground">No projects published yet.</p>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project, index) => {
-              const meta = getProjectMetadata(project.title);
-              return (
-                <Card
-                  key={project.id}
-                  className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/80 bg-background transition-all duration-500 hover:border-accent/40 hover:shadow-[0_20px_50px_rgba(20,38,62,0.12)] hover:-translate-y-2 animate-scale-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div>
-                    {/* Image section with overlay */}
-                    <div className="relative aspect-video overflow-hidden bg-muted border-b border-border/40">
-                      <img
-                        src={project.image || "/placeholder.svg"}
-                        alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/placeholder.svg";
-                        }}
-                      />
-                      {/* Gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
-                        <span className="text-white text-xs font-semibold flex items-center gap-1.5 backdrop-blur-md bg-white/20 px-3 py-1.5 rounded-full border border-white/10">
-                          <Layers className="h-3 w-3" />
-                          View Case Study Details
-                        </span>
-                      </div>
-                      
-                      {/* Category Badge on top-left of image */}
-                      <span className="absolute top-4 left-4 z-10 text-[10px] font-bold uppercase tracking-wider bg-primary text-white border border-white/10 px-3 py-1.5 rounded-md shadow-lg">
-                        {meta.category}
-                      </span>
-                    </div>
-
-                    <CardHeader className="p-6 pb-2">
-                      <CardTitle className="text-2xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
-                        {project.title}
-                      </CardTitle>
-                      <CardDescription className="text-muted-foreground text-sm leading-relaxed mt-2 line-clamp-3">
-                        {project.description}
-                      </CardDescription>
-                    </CardHeader>
-                  </div>
-
-                  <CardContent className="p-6 pt-2 space-y-5">
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-1.5 pt-2">
-                      {meta.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-[10px] py-0.5 px-2 bg-secondary/60 text-secondary-foreground font-medium rounded">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-
-                    {/* Action button */}
-                    <Button
-                      variant="default"
-                      className="w-full group/btn bg-primary hover:bg-accent text-white transition-all duration-300 rounded-xl font-medium"
-                      onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')}
-                    >
-                      <span>Visit the Website</span>
-                      <ExternalLink className="ml-2 h-4 w-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform duration-300" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
+          <div className="grid gap-x-8 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
+            {projects.map((project) => (
+              <a key={project.id} href={project.url} target="_blank" rel="noopener noreferrer" className="group block">
+                <div className="aspect-[16/10] overflow-hidden rounded-2xl bg-white ring-1 ring-black/5">
+                  <img
+                    src={project.image || localScreen(project.title)}
+                    alt={project.title}
+                    loading="lazy"
+                    // Our screenshots fill the frame; uploaded images (logos, flyers) are shown whole.
+                    className={`h-full w-full transition-transform duration-500 group-hover:scale-[1.02] ${project.image ? "object-contain p-6" : "object-cover object-top"}`}
+                    onError={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      const fallback = localScreen(project.title);
+                      if (!img.src.endsWith(fallback)) { img.src = fallback; img.className = "h-full w-full object-cover object-top"; }
+                    }}
+                  />
+                </div>
+                <p className="mt-5 text-sm text-muted-foreground">{categoryFor(project.title)}</p>
+                <h3 className="mt-1 text-xl font-semibold text-primary capitalize">{project.title}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground line-clamp-3">{project.description}</p>
+                <span className="text-link mt-4">Visit website <ArrowUpRight className="h-4 w-4" /></span>
+              </a>
+            ))}
           </div>
         )}
       </div>

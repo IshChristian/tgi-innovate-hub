@@ -8,12 +8,13 @@ interface ProjectLink {
   href: string;
 }
 
+const MOTA_LINK = { name: "MOTA — rides & driver earnings", href: "https://mota.tiangroupinv.rw" };
+
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const [projectLinks, setProjectLinks] = useState<ProjectLink[]>([
-    { name: "Smart Logistics Platform", href: "/#projects" },
-    { name: "GreenCity IoT Hub", href: "/#projects" },
-    { name: "AI Retail Insights", href: "/#projects" },
+    MOTA_LINK,
+    { name: "BrightCoders Community", href: "https://brightcoders.tian.rw" },
   ]);
 
   useEffect(() => {
@@ -28,10 +29,11 @@ const Footer = () => {
           .limit(4);
         
         if (!error && data && data.length > 0) {
-          setProjectLinks(data.map(p => ({
+          // MOTA always leads; other products come from the CMS.
+          setProjectLinks([MOTA_LINK, ...data.filter(p => !/mota/i.test(p.title)).map(p => ({
             name: p.title,
             href: p.url
-          })));
+          }))]);
         }
       } catch (err) {
         console.error("Error fetching projects for footer:", err);
@@ -55,19 +57,16 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-primary text-primary-foreground border-t border-primary-foreground/10 relative overflow-hidden">
-      {/* Decorative gradient overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(175,100,36,0.08),transparent_40%)] pointer-events-none"></div>
-
-      <div className="section-container section-padding pb-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16 relative z-10">
+    <footer className="bg-[#0a1628] text-primary-foreground">
+      <div className="section-container pt-20 pb-10">
+        <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
           {/* Column 1: Company Branding & Social */}
-          <div className="space-y-6">
+          <div className="lg:col-span-5 space-y-6">
             <Link to="/" className="flex items-center space-x-3">
               <img
                 src="/6.png"
                 alt="Tian Group Logo"
-                className="h-10 w-auto brightness-0 invert"
+                className="h-9 w-auto brightness-0 invert"
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
                   const parent = (e.target as HTMLImageElement).parentElement;
@@ -77,39 +76,39 @@ const Footer = () => {
                 }}
               />
             </Link>
-            <p className="text-primary-foreground/80 text-sm leading-relaxed">
-              Tian Group Innovation is a global leader in AI, IoT, automation, and enterprise systems, delivering scalable solutions for sustainable growth.
+            <p className="max-w-sm text-white/60 text-sm leading-relaxed">
+              Tian Group Innovation is a Rwandan startup building apps people use every day — led by MOTA, our ride and driver-earnings app.
             </p>
-            <div className="flex gap-3 pt-2">
-              <a href="#" className="p-2.5 bg-white/5 rounded-xl hover:bg-accent hover:text-white transition-all duration-300">
+            <div className="flex gap-2 pt-2">
+              <a href="#" className="p-2.5 rounded-md border border-white/10 text-white/70 hover:text-white hover:border-white/30 transition-colors">
                 <Linkedin className="h-4.5 w-4.5" />
               </a>
-              <a href="#" className="p-2.5 bg-white/5 rounded-xl hover:bg-accent hover:text-white transition-all duration-300">
+              <a href="#" className="p-2.5 rounded-md border border-white/10 text-white/70 hover:text-white hover:border-white/30 transition-colors">
                 <Twitter className="h-4.5 w-4.5" />
               </a>
-              <a href="#" className="p-2.5 bg-white/5 rounded-xl hover:bg-accent hover:text-white transition-all duration-300">
+              <a href="#" className="p-2.5 rounded-md border border-white/10 text-white/70 hover:text-white hover:border-white/30 transition-colors">
                 <Youtube className="h-4.5 w-4.5" />
               </a>
-              <a href="#" className="p-2.5 bg-white/5 rounded-xl hover:bg-accent hover:text-white transition-all duration-300">
+              <a href="#" className="p-2.5 rounded-md border border-white/10 text-white/70 hover:text-white hover:border-white/30 transition-colors">
                 <Github className="h-4.5 w-4.5" />
               </a>
             </div>
           </div>
 
           {/* Column 2: Navigation Links */}
-          <div>
-            <h4 className="font-bold text-white text-base tracking-wide uppercase mb-6 relative after:content-[''] after:block after:w-8 after:h-[2px] after:bg-accent after:mt-2">
+          <div className="lg:col-span-2">
+            <h4 className="text-[15px] font-medium text-white/45 mb-5">
               Company
             </h4>
-            <ul className="space-y-3.5">
+            <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
                   {link.href.startsWith("/") && !link.href.includes("#") ? (
-                    <Link to={link.href} className="text-sm text-primary-foreground/80 hover:text-accent hover:translate-x-1 inline-block transition-all duration-300">
+                    <Link to={link.href} className="text-[15px] text-white/80 hover:text-white inline-block transition-colors">
                       {link.name}
                     </Link>
                   ) : (
-                    <a href={link.href} className="text-sm text-primary-foreground/80 hover:text-accent hover:translate-x-1 inline-block transition-all duration-300">
+                    <a href={link.href} className="text-[15px] text-white/80 hover:text-white inline-block transition-colors">
                       {link.name}
                     </a>
                   )}
@@ -119,14 +118,14 @@ const Footer = () => {
           </div>
 
           {/* Column 3: Community */}
-          <div>
-            <h4 className="font-bold text-white text-base tracking-wide uppercase mb-6 relative after:content-[''] after:block after:w-8 after:h-[2px] after:bg-accent after:mt-2">
+          <div className="lg:col-span-2">
+            <h4 className="text-[15px] font-medium text-white/45 mb-5">
               Community
             </h4>
-            <ul className="space-y-3.5">
+            <ul className="space-y-3">
               {footerLinks.community.map((link) => (
                 <li key={link.name}>
-                  <a href={link.href} className="text-sm text-primary-foreground/80 hover:text-accent hover:translate-x-1 inline-block transition-all duration-300">
+                  <a href={link.href} className="text-[15px] text-white/80 hover:text-white inline-block transition-colors">
                     {link.name}
                   </a>
                 </li>
@@ -135,11 +134,11 @@ const Footer = () => {
           </div>
 
           {/* Column 4: Quick Links (Projects) */}
-          <div>
-            <h4 className="font-bold text-white text-base tracking-wide uppercase mb-6 relative after:content-[''] after:block after:w-8 after:h-[2px] after:bg-accent after:mt-2">
-              Featured Projects
+          <div className="lg:col-span-3">
+            <h4 className="text-[15px] font-medium text-white/45 mb-5">
+              Our Products
             </h4>
-            <ul className="space-y-3.5">
+            <ul className="space-y-3">
               {projectLinks.map((link, idx) => (
                 <li key={idx}>
                   {link.href.startsWith("http") ? (
@@ -147,14 +146,14 @@ const Footer = () => {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-primary-foreground/80 hover:text-accent hover:translate-x-1 inline-block transition-all duration-300 line-clamp-1"
+                      className="text-[15px] text-white/80 hover:text-white inline-block transition-colors line-clamp-1"
                     >
                       {link.name}
                     </a>
                   ) : (
                     <a
                       href={link.href}
-                      className="text-sm text-primary-foreground/80 hover:text-accent hover:translate-x-1 inline-block transition-all duration-300 line-clamp-1"
+                      className="text-[15px] text-white/80 hover:text-white inline-block transition-colors line-clamp-1"
                     >
                       {link.name}
                     </a>
@@ -166,18 +165,18 @@ const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 mt-4 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
-          <p className="text-sm text-primary-foreground/75">
+        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <p className="text-sm text-white/50">
             © {currentYear} Tian Group Innovation. All Rights Reserved.
           </p>
           <div className="flex items-center gap-6 text-sm">
-            <a href="/privacy" className="text-primary-foreground/75 hover:text-accent transition-colors duration-300">
+            <a href="/privacy" className="text-white/50 hover:text-white transition-colors">
               Privacy Policy
             </a>
-            <a href="/terms" className="text-primary-foreground/75 hover:text-accent transition-colors duration-300">
+            <a href="/terms" className="text-white/50 hover:text-white transition-colors">
               Terms of Service
             </a>
-            <Link to="/login" className="flex items-center text-primary-foreground/40 hover:text-accent transition-colors duration-300 gap-1 text-xs pl-4 border-l border-white/10">
+            <Link to="/login" className="flex items-center text-white/35 hover:text-white transition-colors duration-300 gap-1 text-xs pl-4 border-l border-white/10">
               <ShieldAlert className="h-3.5 w-3.5" />
               <span>Admin Console</span>
             </Link>
