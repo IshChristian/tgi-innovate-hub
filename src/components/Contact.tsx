@@ -43,7 +43,7 @@ const Contact = () => {
   const field = "rounded-xl h-12 border-border bg-[#f8f9fb] focus-visible:ring-accent";
   const channels = [
     { icon: Mail, label: "Email", value: "contact@tiangroupinnovation.com", href: "mailto:contact@tiangroupinnovation.com" },
-    { icon: Phone, label: "Phone", value: "+250 788 123 456", href: "tel:+250788123456", note: "Monday to Friday, 9:00–17:00 CAT" },
+    { icon: Phone, label: "Phone", value: "+250 733 700 075", href: "tel:+250733700075", note: "Monday to Friday, 9:00–17:00 CAT" },
     { icon: MapPin, label: "Office", value: "Tech City Hub, Floor 4, Kigali, Rwanda" },
   ];
 
